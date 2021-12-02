@@ -16,6 +16,19 @@ def homepage():
     """view homepage."""
     return render_template('homepage.html')
 
+@app.route('/login', methods=['POST'])
+def login():
+    """logging an existing user"""
+    email = request.form.get("email")
+    password = request.form.get("password")
+
+    if crud.verify_password(email, password):
+        session['user_email'] = email
+        flash(f'Logged in as {email}')
+    else:
+        flash('Incorrect Login')
+    return redirect('/')
+
 @app.route('/movies')
 def all_movies():
     """View all movies"""
@@ -33,6 +46,21 @@ def all_users():
     """view all users"""
     users = crud.get_users()
     return render_template('all_users.html', users=users)
+
+
+@app.route('/users', methods=['POST'])
+def add_user():
+    """adding a new user"""
+    email = request.form.get("email")
+    password = request.form.get("password")
+
+    if crud.get_user_by_email(email):
+        flash("You already have an account, please log in")
+    else:
+        crud.create_user(email=email, password=password)
+        flash("You've created your account!")
+    return redirect('/')
+
 
 @app.route('/users/<user_id>')
 def user_detail(user_id):

@@ -22,6 +22,12 @@ def get_users():
 def get_user_by_id(user_id):
     return User.query.get(user_id)
 
+def get_user_by_email(email):
+    return User.query.filter(User.email == email).one()
+
+def verify_password(email, password):
+    user = User.query.filter(User.email == email).one()
+    return user.password == password
 
 #----------------------movies functions ------------------#
 def create_movie(title, overview, release_date, poster_path):
